@@ -22,7 +22,7 @@ for x in triangle_coordinates:
 # Barycentric Technique
 total = 0
 counter = 0
-for i in range(0,len(good_coords)-1):
+for i in range(0,len(good_coords)):
 	counter +=1
 	A = np.array(good_coords[i][0])
 	B = np.array(good_coords[i][1])
@@ -37,33 +37,35 @@ for i in range(0,len(good_coords)-1):
 	dot02 = np.dot(v0, v2)
 	dot11 = np.dot(v1, v1)
 	dot12 = np.dot(v1, v2)
-
-	invDenom = 1 / (dot00 * dot11 - dot01 * dot01)
-	u = (dot11 * dot02 - dot01 * dot12) * invDenom
-	v = (dot00 * dot12 - dot01 * dot02) * invDenom
+	u = (dot11 * dot02 - dot01 * dot12) / (dot00 * dot11 - dot01 * dot01)
+	v = (dot00 * dot12 - dot01 * dot02) / (dot00 * dot11 - dot01 * dot01)
 	if ((u >= 0) and (v >= 0) and (u + v < 1)):
 		total += 1
 
-
 print total , counter
+
+
 total = 0
 counter = 0
-for i in range(0,len(good_coords)-1):
+
+def SameSide(p1, p2, a, b):
+	
+	cp1 = np.cross([b[0]-a[0],b[1],a[1]],[p1[0]-a[0],p1[1]-a[1]])
+	cp2 = np.cross([b[0]-a[0],b[1],a[1]],[p2[0]-a[0],p2[1]-a[1]])
+
+	if np.dot(cp1, cp2) >= 0:
+		return True
+
+for i in range(0,len(good_coords)):
 	counter +=1
-	A = good_coords[i][0]
-	B = good_coords[i][1]
-	C = good_coords[i][2]
-	P = [0,0]
-
-	denom = ((B[1]-C[1]) * (A[0]-C[0]) + (C[0]-B[0]) * (A[1]-C[1]))
-
-	alpha = float(((B[1] - C[1])*(P[0] - C[0]) + (C[0] - B[0]) * (P[1]-C[1]))/denom)
-	beta  = float(((C[1] - A[1]) * (P[0] - C[0]) + (A[0] - C[0]) * (P[1]-C[1]))/denom)
-	gamma = 1-alpha-beta
-
-	print alpha,beta,gamma
-	if (alpha > 0 and alpha < 1 and beta < 1 and beta > 0):
+	points = good_coords[i]
+	a = points[0]
+	b = points[1]
+	c = points[2]
+	p = [0,0]
+	if (SameSide(p,a, b,c) and SameSide(p,b, a,c) and SameSide(p,c, a,b)):
 		total += 1
+	
 
 print total, counter
 # try #2
